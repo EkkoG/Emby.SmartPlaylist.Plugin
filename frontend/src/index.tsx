@@ -1,11 +1,14 @@
 import * as React from 'react';
-import * as ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import App from '~/app';
 
 const appElements = document.querySelectorAll('#smartplaylist-root');
 const appElement = appElements[appElements.length - 1];
 
-ReactDOM.render(<App appId={appElement.getAttribute('data-app-id')} />, appElement);
+if (appElement) {
+    const root = createRoot(appElement);
+    root.render(<App appId={appElement.getAttribute('data-app-id')} />);
+}
 
 if (process.env.NODE_ENV !== 'production') {
     // tslint:disable-next-line:no-var-requires
