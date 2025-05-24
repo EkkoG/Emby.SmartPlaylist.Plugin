@@ -139,6 +139,19 @@ namespace SmartPlaylist.Domain
             {
                 Log($"Rolling up collection to {CollectionMode}");
                 newItems = RollUpTo(newItems);
+
+                if (userPlaylist.SmartPlaylist.CollectionMode == CollectionMode.Series)
+                {
+                    var seriesItems = playlistItems.OfType<Series>().ToArray();
+                    // merge series items with new items
+                    newItems = newItems.Union(seriesItems, new BaseItemEqualByInternalId()).ToArray();
+                }
+                else if (userPlaylist.SmartPlaylist.CollectionMode == CollectionMode.Season)
+                {
+                    var seasonItems = playlistItems.OfType<Season>().ToArray();
+                    // merge season items with new items
+                    newItems = newItems.Union(seasonItems, new BaseItemEqualByInternalId()).ToArray();
+                }
             }
 
             if (IsShuffleUpdateType && !NewItemOrder.HasSort && !Limit.HasLimit)
