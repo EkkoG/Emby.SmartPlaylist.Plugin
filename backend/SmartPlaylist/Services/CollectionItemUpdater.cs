@@ -24,12 +24,13 @@ namespace SmartPlaylist.Services
             _collectionManager = collectionManager;
         }
 
-        public (long internalId, string message) UpdateAsync(UserFolder folder, BaseItem[] newItems)
+        public (long internalId, string message) UpdateAsync(UserFolder folder, BaseItem[] newItems, EpimodeAttribute rollTo)
         {
             (long internalId, string message) ret = (0, string.Empty);
             if (folder is LibraryUserFolder<Folder> libraryUserCollection)
             {
                 var currentItems = libraryUserCollection.GetItems();
+                currentItems = Domain.SmartPlaylist.RollUpTo(currentItems, rollTo);
                 int removed = RemoveItems(libraryUserCollection, currentItems,
                     (folder.SmartPlaylist.IsShuffleUpdateType && folder.SmartPlaylist.IsShuffleDue()) || folder.SmartPlaylist.Limit.HasLimit ? new BaseItem[] { } : newItems);
                 int added = AddItemsToCollection(libraryUserCollection,

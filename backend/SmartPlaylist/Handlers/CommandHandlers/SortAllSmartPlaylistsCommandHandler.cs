@@ -52,7 +52,8 @@ public class SortAllSmartPlaylistsCommandHandler : IMessageHandlerAsync<SortAllS
 
                 var updater = (smartPlaylist.SmartType == SmartPlaylist.Domain.SmartType.Collection ? CollectionUpdater : PlaylistUpdater);
                 updater.ClearPlaylist(folder);
-                updater.UpdateAsync(folder, sortedItems);
+                EpimodeAttribute rollTo = smartPlaylist.CollectionMode.GetAttributeOfType<EpimodeAttribute>();
+                updater.UpdateAsync(folder, sortedItems, rollTo);
 
                 smartPlaylist.SortJob.Status = $"Sorted {sortedItems.Length} Items successfully";
                 smartPlaylist.SortJob.LastRan = DateTime.Now;

@@ -11,6 +11,7 @@ using SmartPlaylist.Services.SmartPlaylist;
 using SmartPlaylist.Handlers.Commands;
 using System.Threading;
 using System.Collections.Generic;
+using SmartPlaylist.Extensions;
 
 namespace SmartPlaylist.Handlers.CommandHandlers
 {
@@ -86,16 +87,19 @@ namespace SmartPlaylist.Handlers.CommandHandlers
                 {
                     newItems = smartPlaylist.FilterPlaylistItems(folder.user, processItems).ToArray();
                 }
+                EpimodeAttribute rollTo = smartPlaylist.CollectionMode.GetAttributeOfType<EpimodeAttribute>();
 
                 var update = (smartPlaylist.SmartType == SmartPlaylist.Domain.SmartType.Collection ? _collectionItemsUpdater : _playlistItemsUpdater)
-                    .UpdateAsync(folder.user, newItems);
+                    .UpdateAsync(folder.user, newItems, rollTo);
 
                 smartPlaylist.Status = update.message;
 
                 if (smartPlaylist.InternalId != update.internalId)
                 {
                     if (smartPlaylist.InternalId > 0)
+                    {
                         _folderRepository.Remove(smartPlaylist);
+                    }
 
                     smartPlaylist.InternalId = update.internalId;
                 }

@@ -17,7 +17,8 @@ namespace SmartPlaylist.Domain
 
         public override BaseItem[] GetItems()
         {
-            return _item.GetChildren(User).ToArray();
+            // return _item.GetChildren(User).ToArray();
+            return _item.GetRecursiveChildren().ToArray();
         }
 
         public void DynamicUpdate()

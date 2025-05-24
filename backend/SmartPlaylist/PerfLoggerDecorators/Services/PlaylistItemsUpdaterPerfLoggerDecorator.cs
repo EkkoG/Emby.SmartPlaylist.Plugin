@@ -35,13 +35,13 @@ namespace SmartPlaylist.PerfLoggerDecorators.Services
             }
         }
 
-        public (long internalId, string message) UpdateAsync(UserFolder playlist, BaseItem[] newItems)
+        public (long internalId, string message) UpdateAsync(UserFolder playlist, BaseItem[] newItems, EpimodeAttribute rollTo)
         {
             using (PerfLogger.Create("UpdatePlaylistItems",
                 () => new { playlistName = playlist.SmartPlaylist.Name, newItemsCount = newItems.Length }))
 
             {
-                return _decorated.UpdateAsync(playlist, newItems);
+                return _decorated.UpdateAsync(playlist, newItems, rollTo);
             }
         }
     }

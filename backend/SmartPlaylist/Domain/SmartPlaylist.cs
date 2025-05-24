@@ -138,20 +138,8 @@ namespace SmartPlaylist.Domain
             if (SmartType == SmartType.Collection && CollectionMode != CollectionMode.Item)
             {
                 Log($"Rolling up collection to {CollectionMode}");
-                newItems = RollUpTo(newItems);
-
-                if (userPlaylist.SmartPlaylist.CollectionMode == CollectionMode.Series)
-                {
-                    var seriesItems = playlistItems.OfType<Series>().ToArray();
-                    // merge series items with new items
-                    newItems = newItems.Union(seriesItems, new BaseItemEqualByInternalId()).ToArray();
-                }
-                else if (userPlaylist.SmartPlaylist.CollectionMode == CollectionMode.Season)
-                {
-                    var seasonItems = playlistItems.OfType<Season>().ToArray();
-                    // merge season items with new items
-                    newItems = newItems.Union(seasonItems, new BaseItemEqualByInternalId()).ToArray();
-                }
+                EpimodeAttribute rollTo = CollectionMode.GetAttributeOfType<EpimodeAttribute>();
+                newItems = RollUpTo(newItems, rollTo).ToArray();
             }
 
             if (IsShuffleUpdateType && !NewItemOrder.HasSort && !Limit.HasLimit)
@@ -178,13 +166,12 @@ namespace SmartPlaylist.Domain
             return items.Where(x => !(x is Episode episode && episode.IsMissingEpisode)).ToArray();
         }
 
-        private BaseItem[] RollUpTo(BaseItem[] items)
+        public static BaseItem[] RollUpTo(BaseItem[] items, EpimodeAttribute rollTo)
         {
-            EpimodeAttribute rollTo = CollectionMode.GetAttributeOfType<EpimodeAttribute>();
             return items.Select(x => (x is Episode) ? RollUpToItemType(x, rollTo.MediaType) : x).Distinct().ToArray();
         }
 
-        private BaseItem RollUpToItemType(BaseItem item, Type rollType)
+        private static BaseItem RollUpToItemType(BaseItem item, Type rollType)
         {
             return item.GetType().IsAssignableFrom(rollType) ? item : RollUpToItemType(item.Parent, rollType);
         }
