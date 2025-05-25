@@ -30,7 +30,7 @@ namespace SmartPlaylist.Services
         {
             return new InternalItemsQuery(user)
             {
-                IncludeItemTypes = new string[] { "Episode" },
+                IncludeItemTypes = itemTypes,
 
                 Recursive = true,
                 IsVirtualItem = false,
